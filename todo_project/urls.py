@@ -5,5 +5,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
+    path('tasks/', include('tasks.urls')),
     path('', lambda request: render(request, 'home.html'), name='home'),
 ]

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'accounts',
+    'tasks',
 ]
 
 MIDDLEWARE = [
@@ -129,5 +130,9 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 template_dir = os.environ.get("TEMPLATE_DIR")
 TEMPLATES[0]['DIRS'] = [template_dir or os.path.join(BASE_DIR, 'templates')]
+
+LOGIN_REDIRECT_URL = '/tasks/'
+LOGIN_URL = '/accounts/login/'
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
