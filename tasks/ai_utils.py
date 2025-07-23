@@ -5,10 +5,10 @@ nlp = spacy.load('en_core_web_sm')
 
 def prioritize_task(task):
     due_date = task.due_date
-    description = task.description.lower()
+    description = task.description.lower() if task.description else ''
     doc = nlp(description)
     urgency_score = 0
-    if due_date < datetime.now() + timedelta(days=2):
+    if due_date and due_date < datetime.now(due_date.tzinfo) + timedelta(days=2):
         urgency_score += 2
     for token in doc:
         if token.text in ['urgent', 'important', 'critical']:
@@ -20,7 +20,8 @@ def prioritize_task(task):
     return 'LOW'
 
 def suggest_related_tasks(description):
-    doc = nlp(description.lower())
+    description = description.lower() if description else ''
+    doc = nlp(description)
     suggestions = []
     if any(token.text in ['meeting', 'call', 'discuss'] for token in doc):
         suggestions.append('Schedule meeting room')

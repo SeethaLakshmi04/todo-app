@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Analytics</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Task Analytics</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-2 text-gray-700">Tasks by Priority</h2>
+            <canvas id="priorityChart"></canvas>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-2 text-gray-700">Tasks by Category</h2>
+            <canvas id="categoryChart"></canvas>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-2 text-gray-700">Tasks by Status</h2>
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+    <a href="{% url 'task_list' %}" class="mt-6 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">Back to Tasks</a>
+</div>
+<script>
+    // Ensure Chart.js is loaded
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js is not loaded. Check the CDN.');
+    } else {
+        // Tasks by Priority (Bar Chart)
+        const priorityCtx = document.getElementById('priorityChart')?.getContext('2d');
+        if (priorityCtx) {
+            new Chart(priorityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Low', 'Medium', 'High'],
+                    datasets: [{
+                        label: 'Tasks by Priority',
+                        data: {{ priority_data|safe }} || [0, 0, 0],
+                backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384'],
+                borderColor: '#ffffff',
+                borderWidth: 1
+        }]
+        },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                            title: {
+                            display: true,
+                                text: 'Number of Tasks'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+        }
+
+        // Tasks by Category (Pie Chart)
+        const categoryCtx = document.getElementById('categoryChart')?.getContext('2d');
+        if (categoryCtx) {
+            new Chart(categoryCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Work', 'Personal', 'Other'],
+                    datasets: [{
+                        label: 'Tasks by Category',
+                        data: {{ category_data|safe }} || [0, 0, 0],
+                backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384'],
+                borderWidth: 1
+        }]
+        },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+        }
+
+        // Tasks by Status (Doughnut Chart)
+        const statusCtx = document.getElementById('statusChart')?.getContext('2d');
+        if (statusCtx) {
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pending', 'Completed'],
+                    datasets: [{
+                        label: 'Tasks by Status',
+                        data: {{ status_data|safe }} || [0, 0],
+                backgroundColor: ['#FF6384', '#36A2EB'],
+                borderWidth: 1
+        }]
+        },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        }
+    }
+</script>
+<div class="mt-6 bg-white p-4 rounded-lg shadow-md">
+    <h2 class="text-xl font-semibold mb-2 text-gray-700">Average Completion Time</h2>
+    <p class="text-lg text-gray-600">{{ avg_completion_time|floatformat:2 }} hours</p>
+</div>
+</body>
+</html>
